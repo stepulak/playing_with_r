@@ -104,3 +104,72 @@ scale_vec <- function(vec, new_len) {
 	return(vec_scaled)
 }
 
+even_negative_random <- function(from = 0, to = 1) {
+	return (runif(1, from, to) * (if(runif(1) < 0.5) -1 else 1))
+}
+
+gen_data_linear_reg <- function(num_samples = 20, from = 100, to = 200, var = 30) {
+	samples <- c(from:to)
+	x <- sample(samples, num_samples, replace = TRUE)
+	y <- integer(0)
+	
+	for (i in seq(1:num_samples)) {
+		y[i] = x[i] + even_negative_random(-var, var)
+	}
+	
+	return(data.frame(x = x, y = y))
+}
+
+linear_regression <- function(x, y) {
+	avg_x <- mean(x)
+	avg_y <- mean(y)
+	b1 <- cov(x, y) / var(x)
+	b0 <- avg_y - b1 * avg_x
+	return(data.frame(b1 = b1, b0 = b0, yoffset = b0, coefficient = b1))
+}
+
+plot_random_data_lin_reg <- function() {
+	data <- gen_data_linear_reg(num_samples = 50, var = 50)
+	func <- linear_regression(data$x, data$y)
+	
+	plot(data)
+	
+	xmin <- min(data$x)
+	xmax <- max(data$x)
+	ymin <- func$yoffset + func$coefficient * xmin
+	ymax <- func$yoffset + func$coefficient * xmax
+	
+	lines(x = c(xmin, xmax), y = c(ymin, ymax))
+}
+
+my_cov <- function(x, y) {
+	if(length(x) != length(y)) {
+		print("different length x, y")
+		return(Inf);
+	}
+	
+	avg_x <- mean(x)
+	avg_y <- mean(y)
+	
+	index <- 1
+	max_index <- length(x)
+	sum <- 0
+	
+	while(index <= max_index) {
+		sum <- sum + (x[index] - avg_x) * (y[index] - avg_y)
+		index <- index + 1
+	}
+	
+	return (sum / (max_index - 1))
+}
+
+my_var <- function(x) {
+	avg_x <- mean(x)
+	sum <- 0
+	
+	for(ax in x) {
+		sum <- sum + (ax - avg_x)^2
+	}
+	
+	return(sum / (length(x) - 1))
+}
