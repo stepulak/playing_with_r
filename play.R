@@ -212,35 +212,6 @@ my_var <- function(x) {
 	return(sum / (length(x) - 1))
 }
 
-# @brief This function loads, sorts and remove duplicates from sample csv data extracted by Flowmon demo database
-# @param filename csv file to load
-# @return loaded data, sorted and without duplicates
-load_csv_data_flowmon <- function(filename) {
-	data <- read.csv(file=filename, header=TRUE, sep=";")
-	data <- data[order(data), ]
-	
-	# remove NA values
-	valid_data <- data[is.na(data) == FALSE, ]
-	
-	# extract unique data
-	unique_data <- unique(valid_data)
-	
-	return(head(unique_data, -1))
-}
-
-# @brief Same as load_csv_data_flowmon() function, but for multiple files which will be concatenated
-# @param filenames vector of files to load and concatenate
-# @return loaded and concatenated csv files
-load_multiple_csv_data_flowmon <- function(filenames) {
-	result <- NULL
-	
-	for (filename in filenames) {
-		result <- rbind(result, load_csv_data_flowmon(filename))
-	}
-	
-	return(result)
-}
-
 # @brief Exponential moving average method
 # @vec vector of numbers to filter
 # @a alpha component
